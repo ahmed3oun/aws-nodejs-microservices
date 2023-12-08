@@ -1,0 +1,31 @@
+{
+  "name": "product_service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "serverless offline",
+    "deploy": "serverless deploy --verbose"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.102",
+    "@types/node": "^18.7.13",
+    "prettier": "^2.7.1",
+    "serverless": "^3.22.0",
+    "serverless-offline": "^13.3.0",
+    "serverless-plugin-typescript": "^2.1.2",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@middy/core": "^5.1.0",
+    "@middy/http-json-body-parser": "^5.1.0",
+    "aws-lambda": "^1.0.7",
+    "serverless-esbuild": "^1.50.0",
+    "yarn": "^1.22.21"
+  }
+}

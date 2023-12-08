@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@handlers/*": ["src/handlers/*"],
+        "@libs/*": ["src/libs/*"],
+        "@models/*": ["src/models/*"],
+        "@repository/*": ["src/repository/*"],
+        "@service/*": ["src/service/*"],
+        "@utils/*": ["src/utils/*"],
+        "@src/*": ["src/*"],
+      }
+    }
+  }
+  
