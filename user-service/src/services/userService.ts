@@ -1,18 +1,27 @@
 import { autoInjectable } from "tsyringe";
 import { UserRepository } from "../repositories/userRepository";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
-import { errorResponse, sucessResponse, getSalt, getHashedPassword } from "../utils/helpers/";
+import {
+    errorResponse,
+    sucessResponse,
+    getSalt,
+    getHashedPassword,
+    validatePassword,
+    getToken
+} from "../utils/helpers/";
 import { plainToClass } from 'class-transformer';
 import { SignupDto } from "../utils/dto/signupDto";
 import { appValidationError } from "../utils/helpers/errors";
+import { LoginDto } from "../utils/dto/loginDto";
+import { User } from "../models/user";
 
 
 @autoInjectable()
 export class UserService {
     userRepository: UserRepository;
 
-    constructor(repository?: UserRepository) {
-        this.userRepository = repository!
+    constructor(repository: UserRepository) {
+        this.userRepository = repository
     }
 
     // User Creation, Validation & Login
@@ -26,7 +35,7 @@ export class UserService {
 
             const salt = await getSalt()
             const hashed_password = await getHashedPassword(input.password, salt)
-            const user = await this.userRepository!.createAccount({
+            const user = await this.userRepository.createAccount({
                 email: input.email,
                 password: hashed_password,
                 phone: input.phone,
@@ -36,24 +45,46 @@ export class UserService {
 
             return sucessResponse({ user })
         } catch (error) {
-            console.log({ error });
             errorResponse(500, error)
+        }
+    }
+    //DONE
+    async login(event: APIGatewayProxyEventV2) {
+        try {
+            const input = plainToClass(LoginDto, event.body)
+            const error = await appValidationError(input)
 
+            if (error) return errorResponse(401, error)
+
+            const user = await this.userRepository.findAccount(input.email) as User
+
+            if (!user) {
+                return errorResponse(401, new Error("Unexisted email"))
+            }
+
+            const verified = await validatePassword(input.password, user.password, user.salt)
+
+            if (!verified) {
+                return errorResponse(400, new Error("Incorrect password!"))
+            }
+
+            const token = getToken(user)
+
+            return sucessResponse({
+                token
+            })
+        } catch (error) {
+            return errorResponse(500, error)
         }
     }
 
-    async login(event: APIGatewayProxyEventV2) {
-        return sucessResponse({
-            message: "response from UserService.login "
-        })
-    }
-
+    //get
     async getVerificationToken(event: APIGatewayProxyEventV2) {
         return sucessResponse({
             message: "response from UserService.getVerificationToken "
         })
     }
-
+    //post
     async verifyUser(event: APIGatewayProxyEventV2) {
         return sucessResponse({ message: "response from Verify User" });
     }
