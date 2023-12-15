@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   postgres:
+    container_name: user_service_db
     image: postgres:latest
     restart: always
     environment:
@@ -10,8 +11,27 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - db:/var/lib/postgresql/data
+      - user_service_db:/var/lib/postgresql/data
+  user_service_api:
+    container_name: user_service_api
+    build: ./
+    env_file:
+      - ./.env
+    ports:
+      - 3000:3000
+    environment:
+      #- DATABASE_URL=postgresql://postgres:123@localhost:5432/user_service_db?schema=public
+      #- DATABASE_URL=postgresql://db/user_service_db
+      - DATABASE_URL=postgresql://postgres:5432/user_service_db
+      - TWILIO_ACCOUNT_SID=$TWILIO_ACCOUNT_SID
+      - TWILIO_AUTH_TOKEN=$TWILIO_AUTH_TOKEN
+    depends_on:
+      - postgres
+    volumes:
+      - ./app:./src
+    stdin_open: true
+    tty: true
 
 volumes:
-  db:
+  user_service_db:
     driver: local

@@ -7,7 +7,11 @@ import {
     getSalt,
     getHashedPassword,
     validatePassword,
-    getToken
+    getToken,
+    verifyToken,
+    generateAccessCode,
+    sendVerificationCodeSMS,
+
 } from "../utils/helpers/";
 import { plainToClass } from 'class-transformer';
 import { SignupDto } from "../utils/dto/signupDto";
@@ -80,9 +84,22 @@ export class UserService {
 
     //get
     async getVerificationToken(event: APIGatewayProxyEventV2) {
-        return sucessResponse({
+        try {
+            const token = event.headers.authorization
+            const payload = await verifyToken(token!)
+            if (payload) {
+                const { verifCode, expiry } = generateAccessCode()
+                const response = await sendVerificationCodeSMS(verifCode, payload.phone)
+                return sucessResponse({
+                    message: "verification code is sent to your registered mobile number!",
+                })
+            }
+        } catch (error) {
+            errorResponse(500, error)
+        }
+        /* return sucessResponse({
             message: "response from UserService.getVerificationToken "
-        })
+        }) */
     }
     //post
     async verifyUser(event: APIGatewayProxyEventV2) {

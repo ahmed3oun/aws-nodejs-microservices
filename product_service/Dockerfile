@@ -2,9 +2,13 @@ FROM node:18.16.0-alpine3.17
 
 WORKDIR /app
 
+
 COPY ["package.json", "yarn.lock", "./"]
 
+RUN yarn add -g serverless
+
 RUN yarn install
+# Copy the rest of your project's files
 
 COPY . .
 

@@ -10,6 +10,16 @@ export class UserRepository {
     async createAccount({ phone, email, password, salt, userType }: User): Promise<User | string> {
         try {
             await prismaClient.$connect();
+            const existed_user = await prismaClient.user.findUnique({
+                where: {
+                    email
+                }
+            })
+
+            if (!existed_user) {
+                throw new Error('This email is already existed!')
+            }
+
             const user: User = await prismaClient.user.create({
                 data: {
                     phone,
@@ -39,7 +49,5 @@ export class UserRepository {
         } catch (error) {
             return JSON.stringify(error)
         }
-        // TODO: find account
-        return "User repo find account"
     }
 }
