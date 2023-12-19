@@ -5,4 +5,7 @@ export interface User {
     salt: string;
     phone: string;
     userType: "BUYER" | "SELLER";
+    verification_code: number;
+    isVerified?: boolean | false;
+    expiry: Date
 }

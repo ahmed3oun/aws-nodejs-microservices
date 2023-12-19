@@ -39,12 +39,18 @@ export class UserService {
 
             const salt = await getSalt()
             const hashed_password = await getHashedPassword(input.password, salt)
+
+            const { verification_code, expiry } = generateAccessCode()
+            const response = await sendVerificationCodeSMS(verification_code, input.phone)
             const user = await this.userRepository.createAccount({
                 email: input.email,
                 password: hashed_password,
                 phone: input.phone,
                 salt,
-                userType: "BUYER"
+                userType: "BUYER",
+                verification_code,
+                expiry,
+                isVerified: false
             })
 
             return sucessResponse({ user })
@@ -88,8 +94,8 @@ export class UserService {
             const token = event.headers.authorization
             const payload = await verifyToken(token!)
             if (payload) {
-                const { verifCode, expiry } = generateAccessCode()
-                const response = await sendVerificationCodeSMS(verifCode, payload.phone)
+                const { verification_code, expiry } = generateAccessCode()
+                const response = await sendVerificationCodeSMS(verification_code, payload.phone)
                 return sucessResponse({
                     message: "verification code is sent to your registered mobile number!",
                 })
