@@ -4,8 +4,8 @@ import { middyfy, sucessResponse } from "../utils/helpers/";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 
 
-export const hello = middyfy((event: APIGatewayProxyEventV2) => {
-    return sucessResponse({
+export const hello = middyfy(async (event: APIGatewayProxyEventV2) => {
+    return await sucessResponse({
         message: "Go Serverless v1.0! Your function executed successfully!",
         input: event,
     })

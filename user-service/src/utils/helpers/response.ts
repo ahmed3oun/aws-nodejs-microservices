@@ -1,6 +1,14 @@
 import { APIGatewayProxyResultV2 } from "aws-lambda";
 
-const formatResponse = async (statusCode: number, message: string, data: unknown): Promise<APIGatewayProxyResultV2> => {
+const formatResponse = async (statusCode: number, message: string, data?: unknown): Promise<APIGatewayProxyResultV2> => {
+    console.log('******FROM formatResponse ********');
+    console.log({
+        statusCode,
+        message,
+        data: data
+    });
+
+
     if (data) {
         return {
             statusCode,
@@ -25,17 +33,22 @@ const formatResponse = async (statusCode: number, message: string, data: unknown
     }
 }
 
-export const sucessResponse = (data: object) => {
-    return formatResponse(200, "success", data);
+export const sucessResponse = async (data: object) => {
+    return await formatResponse(200, "success", data);
 };
 
-export const errorResponse = (code = 1000, error: unknown) => {
+export const errorResponse = async (error: any) => {
+    console.log("****FROM errorResponse :>> ", error);
+
     if (Array.isArray(error)) {
         const errorObject = error[0].constraints;
         const errorMesssage =
             errorObject[Object.keys(errorObject)[0]] || "Error Occured";
-        return formatResponse(code, errorMesssage, errorMesssage);
+        return formatResponse(500, errorMesssage, errorMesssage);
     }
-
-    return formatResponse(code, `${error}`, error);
+    console.log({
+        status: error.statusCode,
+        msg: error.message
+    });
+    return await formatResponse(error.statusCode, error.message);
 };

@@ -3,21 +3,24 @@ generator client {
 }
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    user_id Int @id @default(autoincrement())
-    email String  @unique
-    password String
-    salt String
-    phone String
-    userType Role @default(BUYER)
-    verification_code String?
-    expiry DateTime?
-    isVerified Boolean @default(false)
-
+  user_id           Int       @id @default(autoincrement())
+  first_name        String
+  last_name         String
+  email             String    @unique
+  password          String
+  salt              String
+  phone             String
+  userType          Role      @default(BUYER)
+  verification_code Int?
+  expiry            DateTime?
+  isVerified        Boolean   @default(false)
+  profile_pic       String?
+  created_at        DateTime @default(now())
 }
 
 enum Role {
