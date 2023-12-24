@@ -2,8 +2,8 @@ import twilio from 'twilio';
 import ErrorHandler from './ErrorHandler';
 
 const account_id = process.env.TWILIO_ACCOUNT_SID || 'ACfab75a838301bdf1b5fad77412d99f8b';
-const authToken = process.env.TWILIO_AUTH_TOKEN || '48ffa076094abe7e5c463686db162236_a547'
-const sid = 'VA4db1c35ad7bd91359b56d0f598aea68b_5a4'
+const authToken = process.env.TWILIO_AUTH_TOKEN || '48ffa076094abe7e5c463686db162236e8a547'
+const sid = 'VA4db1c35ad7bd91359b56d0f598aea68be5a4'
 const twilioClient = twilio(account_id, authToken)
 
 export const generateAccessCode = () => {
